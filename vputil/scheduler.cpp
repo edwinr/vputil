@@ -1,6 +1,7 @@
 #include "scheduler.h"
 #include <cassert>
 #include <iostream>
+#include <algorithm>
 
 using std::chrono::system_clock;
 using std::chrono::milliseconds;
