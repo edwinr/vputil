@@ -3,7 +3,6 @@
 #include <iostream>
 #include <algorithm>
 
-using std::chrono::system_clock;
 using std::chrono::milliseconds;
 using std::chrono::duration_cast;
 using std::is_sorted;
@@ -19,7 +18,7 @@ void Scheduler::run() {
     while (running) {
         vp_wait(vpInstance, std::max(timeUntilNextTask().count(), 0LL));
         
-        auto now = system_clock::now();
+        auto now = Clock::now();
         while (!tasks.empty()) {
             auto& task = tasks.front();
             if (task.when > now) {
@@ -35,14 +34,18 @@ milliseconds Scheduler::timeUntilNextTask() const {
     auto result = milliseconds(10000);
     if (!tasks.empty()) {
         auto& task = tasks.front();
-        result = duration_cast<milliseconds>(task.when - system_clock::now());
+        result = duration_cast<milliseconds>(task.when - Clock::now());
     }
     return result;
 }
 
 void Scheduler::schedule(milliseconds delay, HandlerFunction handler) {
+    scheduleAt(Clock::now() + delay, handler);
+}
+
+void Scheduler::scheduleAt(std::chrono::time_point<Clock> when, HandlerFunction handler) {
     Task task;
-    task.when = system_clock::now() + delay;
+    task.when = when;
     task.handler = handler;
     insertTask(task);
 }

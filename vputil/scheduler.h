@@ -13,6 +13,8 @@ namespace vputil {
  */
 class Scheduler {
     typedef std::function<void()> HandlerFunction;
+    typedef std::chrono::system_clock Clock;
+
     struct Task {
         std::chrono::time_point<std::chrono::system_clock> when;
         std::function<void()> handler;
@@ -31,6 +33,7 @@ public:
     
     void run();
     void schedule(std::chrono::milliseconds delay, HandlerFunction handler);
+    void scheduleAt(std::chrono::time_point<Clock> when, HandlerFunction handler);
                   
 };
 } //namespace vputil
